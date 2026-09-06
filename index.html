@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CASE FILE: Fatema - DETECTIVE EDITION</title>
+<!-- Google Fonts Import -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --pink-light: #fff0f5;
+    --pink-soft: #fbcfe8;
+    --pink-main: #f472b6;
+    --pink-dark: #db2777;
+    --pink-deep: #831843;
+    --text-dark: #290f1e;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(244, 114, 182, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100vh;
+    background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f472b6 100%);
+    color: var(--text-dark);
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    cursor: default;
+  }
+
+  /* Animated Background Elements */
+  .bg-animation {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    display: block;
+    opacity: 0.5;
+    animation: floatUp 12s linear infinite;
+    bottom: -80px;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Confetti Container */
+  #confetti-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 99;
+    overflow: hidden;
+  }
+  .confetti {
+    position: absolute;
+    width: 10px; height: 10px;
+    opacity: 0.8;
+    animation: confettiFall 4s ease-in-out infinite;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Detective Crime Tape Banner */
+  .tape {
+    position: fixed; top: 0; left: 0; width: 100%; height: 26px;
+    background: repeating-linear-gradient(-45deg, #db2777, #db2777 15px, #831843 15px, #831843 30px);
+    z-index: 50;
+    box-shadow: 0 3px 10px rgba(219, 39, 119, 0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .stage {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 50px 20px 30px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .scene { display: none; width: 100%; max-width: 620px; }
+  .scene.active { display: block; animation: caseOpen 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+  @keyframes caseOpen {
+    from { opacity: 0; transform: scale(0.85) translateY(30px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .file {
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 2px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(219, 39, 119, 0.2), 0 5px 15px rgba(0,0,0,0.05);
+    padding: 35px 30px;
+    position: relative;
+  }
+
+  /* Detective Badge Tag */
+  .file::before {
+    content: "🕵️‍♀️ CASE FILE";
+    position: absolute; top: -14px; left: 30px;
+    background: linear-gradient(135deg, var(--pink-dark), var(--pink-deep));
+    color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    padding: 4px 14px; border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+  }
+
+  .case-no {
+    font-size: 12px; font-weight: 700; letter-spacing: 2.5px;
+    color: var(--pink-dark); text-transform: uppercase; margin-bottom: 8px; margin-top: 5px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800; font-size: 26px;
+    margin: 4px 0 18px; color: var(--pink-deep);
+    border-bottom: 2px dashed rgba(219, 39, 119, 0.25);
+    padding-bottom: 12px;
+  }
+
+  p { font-size: 15px; line-height: 1.7; margin: 0 0 14px; color: var(--text-dark); font-weight: 400; }
+
+  .suspect-box {
+    margin-top: 18px; padding: 16px 20px;
+    border-radius: 16px;
+    border: 2px dashed var(--pink-dark);
+    background: rgba(251, 207, 232, 0.45);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .suspect-box .label { font-size: 11px; letter-spacing: 2px; color: var(--pink-dark); font-weight: 700; }
+  .suspect-box .name { font-family: 'Dancing Script', cursive; font-size: 38px; color: var(--pink-deep); margin-top: 2px; }
+  .threat { margin-top: 8px; font-size: 13px; color: var(--pink-dark); font-weight: 700; }
+
+  button, .btn {
+    font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 0.5px;
+    background: linear-gradient(135deg, var(--pink-dark) 0%, var(--pink-deep) 100%);
+    color: #fff;
+    border: none; padding: 14px 28px; font-size: 15px; cursor: pointer;
+    border-radius: 30px;
+    margin-top: 20px; display: inline-block;
+    box-shadow: 0 6px 18px rgba(219, 39, 119, 0.35);
+    transition: all 0.3s ease;
+  }
+  button:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 22px rgba(219, 39, 119, 0.45);
+  }
+  button:active { transform: translateY(0); }
+
+  .magnifier-wrapper {
+    position: absolute; right: 20px; top: 15px;
+    width: 60px; height: 60px; pointer-events: none;
+    animation: searchMotion 4s ease-in-out infinite alternate;
+  }
+  .magnifier-glass {
+    font-size: 45px; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));
+  }
+  @keyframes searchMotion {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-30px, 20px) rotate(-15deg); }
+    100% { transform: translate(10px, 40px) rotate(10deg); }
+  }
+
+  .anim-text {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .scene.active .anim-text.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scan-log { font-size: 14px; color: var(--pink-deep); min-height: 120px; font-weight: 500; }
+  .scan-log div { opacity: 0; margin-bottom: 8px; transform: translateX(-10px); transition: all 0.4s ease; }
+  .scan-log div.show { opacity: 1; transform: translateX(0); }
+  
+  .radar-container {
+    width: 80px; height: 80px; margin: 10px auto;
+    border: 2px solid var(--pink-dark); border-radius: 50%;
+    position: relative; overflow: hidden;
+    background: rgba(251, 207, 232, 0.3);
+  }
+  .radar-sweep {
+    width: 100%; height: 100%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(219, 39, 119, 0.4) 60deg, transparent 60deg);
+    animation: sweep 2s linear infinite;
+    border-radius: 50%;
+  }
+  @keyframes sweep { 100% { transform: rotate(360deg); } }
+
+  .bar-track { width: 100%; height: 16px; border-radius: 10px; border: 1px solid var(--pink-dark); margin-top: 14px; background: #fff; overflow: hidden; }
+  .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); transition: width 2.4s linear; }
+  .pct { font-size: 13px; font-weight: 700; color: var(--pink-dark); margin-top: 6px; }
+
+  .evidence-tag { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: var(--pink-dark); margin-bottom: 4px; margin-top: 12px;}
+  .stamp {
+    position: absolute; top: 22px; right: 20px;
+    border: 2px solid var(--pink-dark); color: var(--pink-dark);
+    font-weight: 800; font-size: 11px; padding: 4px 10px; letter-spacing: 2px;
+    border-radius: 6px; transform: rotate(12deg); opacity: 0.85;
+    animation: stampPulse 2s infinite ease-in-out;
+  }
+  @keyframes stampPulse { 0%, 100% { transform: rotate(12deg) scale(1); } 50% { transform: rotate(12deg) scale(1.05); } }
+
+  .terminal {
+    background: #23121e; color: #fbcfe8; font-family: monospace;
+    padding: 20px; border-radius: 14px; font-size: 14px; line-height: 1.7; min-height: 150px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .cursor { display: inline-block; width: 8px; height: 15px; background: var(--pink-main); animation: blink 1s infinite; vertical-align: middle; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .error-box {
+    border: 2px solid var(--pink-dark); background: rgba(251, 207, 232, 0.5);
+    border-radius: 14px; padding: 18px; margin-top: 12px;
+  }
+  .error-box .title { color: var(--pink-deep); font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+
+  .verdict-line { font-size: 14px; color: var(--pink-deep); margin-bottom: 8px; font-weight: 500; }
+  .happy {
+    font-family: 'Dancing Script', cursive; font-size: 42px; color: var(--pink-dark);
+    margin: 15px 0 6px; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+  }
+  .sub { text-align: center; font-size: 14px; color: var(--text-dark); margin-bottom: 16px; }
+
+  .photo-frame {
+    width: 180px; height: 180px; margin: 15px auto;
+    border: 4px solid #fff; border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(219, 39, 119, 0.25);
+    overflow: hidden; background: #fce7f3;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; cursor: pointer; transition: transform 0.3s ease;
+  }
+  .photo-frame:hover { transform: scale(1.04); }
+  .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-placeholder { text-align: center; padding: 10px; color: var(--pink-dark); }
+  .photo-placeholder span { font-size: 32px; display: block; margin-bottom: 4px; }
+  .photo-placeholder p { font-size: 11px; margin: 0; font-weight: 600; color: var(--pink-deep); }
+  #photoInput { display: none; }
+
+  .status-line { display: flex; justify-content: space-between; font-size: 13px; margin-top: 16px; border-top: 1.5px dashed var(--glass-border); padding-top: 12px; font-weight: 600; }
+  .closed-stamp {
+    display: inline-block; border: 2.5px solid var(--pink-dark); color: var(--pink-dark);
+    font-weight: 800; padding: 6px 18px; border-radius: 8px;
+    transform: rotate(-5deg); letter-spacing: 2px; margin: 18px auto 0; text-align: center;
+  }
+
+  .classified-btn-wrapper { margin-top: 25px; text-align: center; }
+  .classified-btn {
+    background: linear-gradient(135deg, #290f1e 0%, #831843 100%);
+    color: #fbcfe8 !important;
+    border: 2px solid var(--pink-main);
+    padding: 12px 26px;
+    font-size: 14px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(244, 114, 182, 0.6);
+    animation: pulse 2s infinite;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(244, 114, 182, 0.7); }
+    70% { box-shadow: 0 0 0 14px rgba(244, 114, 182, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(244, 114, 182, 0); }
+  }
+
+  .classified {
+    background: rgba(35, 18, 30, 0.94);
+    border-color: var(--pink-main);
+    color: #fbcfe8;
+  }
+  .classified h1 { color: #f472b6; border-color: rgba(244, 114, 182, 0.3); }
+  .classified p { color: #fbcfe8; }
+
+  .center { text-align: center; }
+
+  @media (max-width: 480px) {
+    .file { padding: 25px 20px; }
+    h1 { font-size: 23px; }
+    .happy { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-animation" id="bgAnimation"></div>
+<div id="confetti-container"></div>
+<div class="tape">⚠️ CONFIDENTIAL BIRTHDAY INVESTIGATION ⚠️</div>
+
+<div class="stage">
+
+  <!-- SCENE 1: URGENT NOTICE -->
+  <div class="scene active" data-scene="1">
+    <div class="file">
+      <div class="magnifier-wrapper"><div class="magnifier-glass">🔍</div></div>
+      <div class="case-no anim-text">CASE No. 09-07 / BIRTHDAY DIVISION</div>
+      <h1 class="anim-text">🚨 URGENT NOTICE</h1>
+      <p class="anim-text">Suspicious birthday activity has been detected.</p>
+      <p class="anim-text">Someone appears to have become <strong>1 year older</strong> today. Our investigation team has been working on this case since midnight.</p>
+      <div class="suspect-box anim-text">
+        <div class="label">SUSPECT IDENTIFIED</div>
+        <div class="name">Fatema</div>
+        <div class="threat">THREAT LEVEL: VERY CUTE & OLD 👵✨</div>
+      </div>
+      <div class="center anim-text">
+        <button data-goto="2">🔍 START INVESTIGATION</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 2: SCANNING -->
+  <div class="scene" data-scene="2">
+    <div class="file">
+      <div class="case-no anim-text">CASE No. 09-07 / IN PROGRESS</div>
+      <h1 class="anim-text">INITIALIZING INVESTIGATION...</h1>
+      
+      <div class="radar-container anim-text">
+        <div class="radar-sweep"></div>
+      </div>
+
+      <div class="scan-log" id="scanLog"></div>
+      <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+      <div class="pct" id="pct">0%</div>
+      <div class="center">
+        <button id="evidenceBtn" style="display:none;" data-goto="3">📁 VIEW EVIDENCE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 3: EVIDENCE -->
+  <div class="scene" data-scene="3">
+    <div class="file">
+      <div class="stamp">CONFIDENTIAL</div>
+      <div class="magnifier-wrapper"><div class="magnifier-glass">🔎</div></div>
+      <div class="case-no anim-text">CASE No. 09-07 / EVIDENCE LOG</div>
+      <h1 class="anim-text">📸 EVIDENCE FOUND</h1>
+
+      <div class="evidence-tag anim-text">📁 FILE #01</div>
+      <p class="anim-text">
+        Subject is extremely talented.<br>
+        Unfortunately, she knows it too. 😭<br>
+        Her presentation skills are suspiciously good,<br>
+        and her confidence level requires further investigation.<br>
+        <strong>SHOW-OFF DETECTED 💀</strong>
+      </p>
+
+      <div class="evidence-tag anim-text">📁 FILE #02</div>
+      <p class="anim-text">
+        Subject is known for helping everyone around her.<br>
+        A surprisingly kind person, honestly. 🥹<br>
+        But once she becomes the leader…<br>
+        good luck changing her decision. 😭👑<br>
+        <strong>BOSS MODE ACTIVATED ✓</strong>
+      </p>
+
+      <div class="evidence-tag anim-text">📁 FILE #03</div>
+      <p class="anim-text">
+        Subject has a very charming personality.<br>
+        She can talk her way out of almost anything.<br>
+        And somehow, when she acts like a little kid,<br>
+        everyone just forgets to be annoyed with her. 💀🎀<br>
+        <strong>CUTENESS OVERLOAD — SYSTEM FAILURE</strong>
+      </p>
+
+      <div class="threat anim-text" style="margin-top:16px;">🚨 NEW EVIDENCE REQUIRES AGE VERIFICATION</div>
+      <div class="center anim-text">
+        <button data-goto="4">🧪 VERIFY HER AGE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4: AGE VERIFICATION -->
+  <div class="scene" data-scene="4">
+    <div class="file">
+      <div class="case-no anim-text">FORM 44-B / OFFICIAL USE ONLY</div>
+      <h1 class="anim-text">🏛️ AGE VERIFICATION PORTAL</h1>
+      <p class="anim-text"><strong>Identity:</strong> Fatema &nbsp;|&nbsp; <strong>Status:</strong> UNDER INVESTIGATION</p>
+      <div class="terminal" id="termLog">
+        <div class="prompt">&gt; calculating actual age...</div>
+      </div>
+      <div class="center">
+        <button id="errorContinueBtn" style="display:none;" data-goto="5">CONTINUE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 5: SYSTEM ERROR -->
+  <div class="scene" data-scene="5">
+    <div class="file" id="errorFile">
+      <div class="case-no anim-text">SYSTEM LOG / FATAL EXCEPTION</div>
+      <h1 class="anim-text">⚠️ SYSTEM ERROR</h1>
+      <div class="error-box anim-text">
+        <div class="title">UNABLE TO DISPLAY SUBJECT'S AGE</div>
+        <p style="margin:0;">Reason: Age is too high to be publicly disclosed! 💀🌸</p>
+      </div>
+      <p class="anim-text" style="margin-top:14px;">Please contact the Birthday Department for further information.</p>
+      <div class="center anim-text">
+        <button data-goto="6">ACCEPT YOUR FATE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 6: FINAL VERDICT WITH PHOTO PLACEHOLDER & CONFETTI -->
+  <div class="scene" data-scene="6">
+    <div class="file">
+      <div class="case-no anim-text">FINAL REPORT / BIRTHDAY DIVISION</div>
+      <h1 class="anim-text">⚖️ FINAL INVESTIGATION REPORT</h1>
+      
+      <!-- PHOTO PLACEHOLDER FRAME -->
+    <div class="photo-frame anim-text">
+      <img id="birthdayPhoto" src="Fattu.jpeg" alt="Birthday Girl" style="display: block;" />
+    </div>
+
+      <div class="verdict-line anim-text">After extensive investigation...</div>
+      <div class="verdict-line anim-text">After analyzing all available evidence...</div>
+      <div class="verdict-line anim-text">We have reached an indisputable conclusion.</div>
+
+      <div class="happy anim-text">🎂 HAPPY BIRTHDAY, Fatema(Fattu)=P ! 🥳</div>
+      <div class="sub anim-text">Don't worry. You're still young... at least mentally! 😉💖</div>
+
+      <div class="status-line anim-text">
+        <span>CRIME: Becoming older</span>
+        <span>PUNISHMENT: 1 Birthday Treat 🍨</span>
+      </div>
+      <div class="status-line anim-text" style="border-top:none; padding-top:0;">
+        <span>APPEAL: DENIED 🚨</span>
+        <span></span>
+      </div>
+      <div class="center anim-text">
+        <div class="closed-stamp">CASE CLOSED</div>
+      </div>
+      
+      <!-- ENHANCED CLASSIFIED FILE BUTTON -->
+      <div class="classified-btn-wrapper anim-text">
+        <button class="classified-btn" data-goto="7">
+          <span>🔐 CLICK TO OPEN CLASSIFIED FILE</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 7: CLASSIFIED -->
+  <div class="scene" data-scene="7">
+    <div class="file classified">
+      <div class="case-no anim-text" style="color:#f472b6;">EYES ONLY</div>
+      <h1 class="anim-text">🔐 TOP SECRET</h1>
+      <p class="anim-text">The investigation team has one final message...</p>
+      <p class="anim-text" style="font-family:'Playfair Display', serif; font-size:20px; color:#fff; text-align:center; margin: 20px 0;">
+        "You're actually a pretty amazing friend!" ✨
+      </p>
+      <p class="anim-text">But shhh... don't let this information get out. 🤫</p>
+      <p class="anim-text" style="text-align:center; font-size:26px; color:#f472b6; font-family:'Dancing Script', cursive; margin-top:20px;">
+        Have a wonderful day! 🎉
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Background Floating Particles
+function createBgParticles() {
+  const container = document.getElementById('bgAnimation');
+  const symbols = ['🌸', '🎂', '🔍', '🎈', '✨', '🔎', '🎉', '🎁'];
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('span');
+    p.classList.add('particle');
+    p.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (10 + Math.random() * 8) + 's';
+    p.style.fontSize = (14 + Math.random() * 16) + 'px';
+    container.appendChild(p);
+  }
+}
+createBgParticles();
+
+// Confetti Burst Trigger for Scene 6
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  container.innerHTML = ''; // clear previous
+  const colors = ['#db2777', '#f472b6', '#fbcfe8', '#ffd1dc', '#ffffff', '#ffeb3b'];
+  
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.classList.add('confetti');
+    c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    c.style.left = Math.random() * 100 + '%';
+    c.style.animationDelay = (Math.random() * 2) + 's';
+    c.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.style.width = (8 + Math.random() * 6) + 'px';
+    c.style.height = (8 + Math.random() * 6) + 'px';
+    container.appendChild(c);
+  }
+}
+
+// Sequential Text Animation Function
+function triggerTextAnimations(sceneEl) {
+  const animatedTexts = sceneEl.querySelectorAll('.anim-text');
+  animatedTexts.forEach((el, index) => {
+    el.classList.remove('show');
+    setTimeout(() => {
+      el.classList.add('show');
+    }, index * 170);
+  });
+}
+
+function goTo(n){
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  const target = document.querySelector('.scene[data-scene="'+n+'"]');
+  if(!target) return;
+  target.classList.add('active');
+  
+  triggerTextAnimations(target);
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  if(n === 2) runScan();
+  if(n === 4) runAgeCheck();
+  if(n === 5){
+    const f = document.getElementById('errorFile');
+    f.classList.remove('shake');
+    void f.offsetWidth;
+    f.classList.add('shake');
+  }
+  if(n === 6) {
+    launchConfetti();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const activeScene = document.querySelector('.scene.active');
+  if(activeScene) triggerTextAnimations(activeScene);
+});
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-goto]');
+  if(!el) return;
+  goTo(parseInt(el.getAttribute('data-goto'), 10));
+});
+
+// Image Upload Handler
+function loadPhoto(event) {
+  const image = document.getElementById('birthdayPhoto');
+  const placeholder = document.getElementById('photoPlaceholder');
+  if(event.target.files && event.target.files[0]) {
+    image.src = URL.createObjectURL(event.target.files[0]);
+    image.style.display = 'block';
+    placeholder.style.display = 'none';
+  }
+}
+
+function runScan(){
+  const lines = [
+    "Scanning birthday database...",
+    "Searching suspect records...",
+    "Analyzing suspicious cuteness levels...",
+    "Gathering evidence..."
+  ];
+  const log = document.getElementById('scanLog');
+  const bar = document.getElementById('barFill');
+  const pct = document.getElementById('pct');
+  const btn = document.getElementById('evidenceBtn');
+  log.innerHTML = '';
+  bar.style.width = '0%';
+  pct.textContent = '0%';
+  btn.style.display = 'none';
+
+  lines.forEach((t, i) => {
+    setTimeout(() => {
+      const d = document.createElement('div');
+      d.textContent = '> ' + t;
+      log.appendChild(d);
+      requestAnimationFrame(() => d.classList.add('show'));
+    }, i * 550);
+  });
+
+  setTimeout(() => { bar.style.width = '100%'; }, 100);
+
+  let p = 0;
+  const iv = setInterval(() => {
+    p += Math.floor(Math.random()*9)+4;
+    if(p >= 100){ p = 100; clearInterval(iv); }
+    pct.textContent = p + '%';
+  }, 220);
+
+  setTimeout(() => {
+    pct.textContent = '100% — EVIDENCE FOUND 💕';
+    btn.style.display = 'inline-block';
+  }, 2500);
+}
+
+function runAgeCheck(){
+  const term = document.getElementById('termLog');
+  const continueBtn = document.getElementById('errorContinueBtn');
+  term.innerHTML = '<div class="prompt">&gt; calculating actual age<span class="cursor"></span></div>';
+  continueBtn.style.display = 'none';
+
+  const steps = [12, 27, 47, 68, 89, 99];
+
+  steps.forEach((val, idx) => {
+    setTimeout(() => {
+      const d = document.createElement('div');
+      d.textContent = 'Progress: ' + val + '%';
+      term.appendChild(d);
+    }, (idx + 1) * 450);
+  });
+
+  const errorDelay = (steps.length + 1) * 450;
+  setTimeout(() => {
+    const d = document.createElement('div');
+    d.innerHTML = '<span style="color:#f472b6;">ERROR - VALUE EXCEEDS DISPLAY LIMIT!</span>';
+    term.appendChild(d);
+    continueBtn.style.display = 'inline-block';
+  }, errorDelay);
+}
+</script>
+</body>
+</html>
